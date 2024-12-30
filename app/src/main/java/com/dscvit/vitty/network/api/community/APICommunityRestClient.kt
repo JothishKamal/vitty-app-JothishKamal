@@ -2,6 +2,8 @@ package com.dscvit.vitty.network.api.community
 
 import com.dscvit.vitty.network.api.community.requests.AuthRequestBody
 import com.dscvit.vitty.network.api.community.requests.UsernameRequestBody
+import com.dscvit.vitty.network.api.community.requests.notes.SaveNoteRequestBody
+import com.dscvit.vitty.network.api.community.responses.notes.SaveNoteResponse
 import com.dscvit.vitty.network.api.community.responses.requests.RequestsResponse
 import com.dscvit.vitty.network.api.community.responses.user.FriendResponse
 import com.dscvit.vitty.network.api.community.responses.user.PostResponse
@@ -296,5 +298,39 @@ class APICommunityRestClient {
 
     }
 
+    fun saveNote(
+        token: String,
+        noteId: String?,
+        noteName: String,
+        username: String,
+        courseId: String,
+        courseName: String,
+        noteContent: String,
+        retrofitSaveNoteListener: RetrofitSaveNoteListener
+    ){
+        val bearerToken = "Bearer $token"
 
+        val saveNoteRequestBody = SaveNoteRequestBody(
+            noteId,
+            noteName,
+            username,
+            courseId,
+            courseName,
+            noteContent
+        )
+
+        mApiUser = retrofit.create<APICommunity>(APICommunity::class.java)
+        val apiSaveNoteCall = mApiUser!!.saveNote(
+            bearerToken,
+            saveNoteRequestBody
+        )
+        apiSaveNoteCall.enqueue(object : Callback<SaveNoteResponse> {
+            override fun onResponse(call: Call<SaveNoteResponse>, response: Response<SaveNoteResponse>) {
+                retrofitSaveNoteListener.onSuccess(call, response.body())
+            }
+            override fun onFailure(call: Call<SaveNoteResponse>, t: Throwable) {
+                retrofitSaveNoteListener.onError(call, t)
+            }
+        })
+    }
 }

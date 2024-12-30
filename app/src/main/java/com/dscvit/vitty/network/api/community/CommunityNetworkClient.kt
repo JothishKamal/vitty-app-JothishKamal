@@ -1,7 +1,7 @@
 package com.dscvit.vitty.network.api.community
 
 
-import com.dscvit.vitty.util.APIConstants.COMMUNITY_BASE_URL
+import com.dscvit.vitty.util.WebConstants.COMMUNITY_BASE_URL
 import com.dscvit.vitty.util.APIConstants.TIMEOUT
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit

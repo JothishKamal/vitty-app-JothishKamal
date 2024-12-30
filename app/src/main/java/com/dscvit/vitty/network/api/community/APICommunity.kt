@@ -2,6 +2,8 @@ package com.dscvit.vitty.network.api.community
 
 import com.dscvit.vitty.network.api.community.requests.AuthRequestBody
 import com.dscvit.vitty.network.api.community.requests.UsernameRequestBody
+import com.dscvit.vitty.network.api.community.requests.notes.SaveNoteRequestBody
+import com.dscvit.vitty.network.api.community.responses.notes.SaveNoteResponse
 import com.dscvit.vitty.network.api.community.responses.requests.RequestsResponse
 import com.dscvit.vitty.network.api.community.responses.user.FriendResponse
 import com.dscvit.vitty.network.api.community.responses.user.PostResponse
@@ -75,4 +77,10 @@ interface APICommunity {
         @Header("Authorization") authToken: String,
         @Path("username") username: String
     ): Call<PostResponse>
+
+    @POST("/api/v2/notes/save")
+    fun saveNote(
+        @Header("Authorization") authToken: String,
+        @Body body: SaveNoteRequestBody
+    ): Call<SaveNoteResponse>
 }

@@ -14,3 +14,7 @@
 .cxx
 /app/google-services.json
 /keystore.properties
+/app/src/main/java/com/dscvit/vitty/util/WebConstants.kt
+/.idea/material_theme_project_new.xml
+/.idea/detekt.xml
+app/src/google-services.json

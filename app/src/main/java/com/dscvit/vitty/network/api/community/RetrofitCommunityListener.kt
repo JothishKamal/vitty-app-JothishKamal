@@ -1,5 +1,6 @@
 package com.dscvit.vitty.network.api.community
 
+import com.dscvit.vitty.network.api.community.responses.notes.SaveNoteResponse
 import com.dscvit.vitty.network.api.community.responses.requests.RequestsResponse
 import com.dscvit.vitty.network.api.community.responses.user.FriendResponse
 import com.dscvit.vitty.network.api.community.responses.user.PostResponse
@@ -37,4 +38,10 @@ interface RetrofitUserActionListener {
 
     fun onSuccess(call: Call<PostResponse>?, response: PostResponse?)
     fun onError(call: Call<PostResponse>?, t: Throwable?)
+}
+
+interface RetrofitSaveNoteListener {
+
+    fun onSuccess(call: Call<SaveNoteResponse>?, response: SaveNoteResponse?)
+    fun onError(call: Call<SaveNoteResponse>?, t: Throwable?)
 }
