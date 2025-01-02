@@ -1,8 +1,10 @@
 package com.dscvit.vitty.network.api.community
 
+import com.dscvit.vitty.network.api.community.responses.notes.GetNoteResponse
 import com.dscvit.vitty.network.api.community.responses.notes.SaveNoteResponse
 import com.dscvit.vitty.network.api.community.responses.requests.RequestsResponse
 import com.dscvit.vitty.network.api.community.responses.user.FriendResponse
+import com.dscvit.vitty.network.api.community.responses.user.GhostResponse
 import com.dscvit.vitty.network.api.community.responses.user.PostResponse
 import com.dscvit.vitty.network.api.community.responses.user.SignInResponse
 import com.dscvit.vitty.network.api.community.responses.user.UserResponse
@@ -44,4 +46,14 @@ interface RetrofitSaveNoteListener {
 
     fun onSuccess(call: Call<SaveNoteResponse>?, response: SaveNoteResponse?)
     fun onError(call: Call<SaveNoteResponse>?, t: Throwable?)
+}
+
+interface RetrofitGetNoteListener {
+    fun onSuccess(response: GetNoteResponse?)
+    fun onError(call: Call<*>?, throwable: Throwable?)
+}
+
+interface RetrofitGhostListener {
+    fun onSuccess(call: Call<GhostResponse>?, response: GhostResponse?)
+    fun onError(call: Call<GhostResponse>?, t: Throwable?)
 }

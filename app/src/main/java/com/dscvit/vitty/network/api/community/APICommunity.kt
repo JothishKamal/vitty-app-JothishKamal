@@ -6,9 +6,11 @@ import com.dscvit.vitty.network.api.community.requests.notes.SaveNoteRequestBody
 import com.dscvit.vitty.network.api.community.responses.notes.SaveNoteResponse
 import com.dscvit.vitty.network.api.community.responses.requests.RequestsResponse
 import com.dscvit.vitty.network.api.community.responses.user.FriendResponse
+import com.dscvit.vitty.network.api.community.responses.user.GhostResponse
 import com.dscvit.vitty.network.api.community.responses.user.PostResponse
 import com.dscvit.vitty.network.api.community.responses.user.SignInResponse
 import com.dscvit.vitty.network.api.community.responses.user.UserResponse
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -83,4 +85,22 @@ interface APICommunity {
         @Header("Authorization") authToken: String,
         @Body body: SaveNoteRequestBody
     ): Call<SaveNoteResponse>
+
+    @GET("/api/v2/notes/{courseId}/")
+    fun getNotes(
+        @Header("Authorization") authToken: String,
+        @Path("courseId") courseId: String
+    ): Call<ResponseBody>
+
+    @POST("/api/v2/friends/ghost/{username}/")
+    fun ghostFriend(
+        @Header("Authorization") authToken: String,
+        @Path("username") username: String
+    ): Call<GhostResponse>
+
+    @POST("/api/v2/friends/alive/{username}/")
+    fun aliveFriend(
+        @Header("Authorization") authToken: String,
+        @Path("username") username: String
+    ): Call<GhostResponse>
 }

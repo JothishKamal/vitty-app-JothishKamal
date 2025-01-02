@@ -3,14 +3,20 @@ package com.dscvit.vitty.network.api.community
 import com.dscvit.vitty.network.api.community.requests.AuthRequestBody
 import com.dscvit.vitty.network.api.community.requests.UsernameRequestBody
 import com.dscvit.vitty.network.api.community.requests.notes.SaveNoteRequestBody
+import com.dscvit.vitty.network.api.community.responses.notes.GetNoteResponse
+import com.dscvit.vitty.network.api.community.responses.notes.GetNoteSuccessResponse
+import com.dscvit.vitty.network.api.community.responses.notes.GetNoteNoNotesResponse
 import com.dscvit.vitty.network.api.community.responses.notes.SaveNoteResponse
 import com.dscvit.vitty.network.api.community.responses.requests.RequestsResponse
 import com.dscvit.vitty.network.api.community.responses.user.FriendResponse
+import com.dscvit.vitty.network.api.community.responses.user.GhostResponse
 import com.dscvit.vitty.network.api.community.responses.user.PostResponse
 import com.dscvit.vitty.network.api.community.responses.user.SignInResponse
 import com.dscvit.vitty.network.api.community.responses.user.UserResponse
 import com.google.gson.Gson
+import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -330,6 +336,90 @@ class APICommunityRestClient {
             }
             override fun onFailure(call: Call<SaveNoteResponse>, t: Throwable) {
                 retrofitSaveNoteListener.onError(call, t)
+            }
+        })
+    }
+
+    fun getNotes(
+        token: String,
+        courseId: String,
+        retrofitGetNoteListener: RetrofitGetNoteListener
+    ) {
+        val bearerToken = "Bearer $token"
+
+        mApiUser = retrofit.create<APICommunity>(APICommunity::class.java)
+        val apiGetNoteCall = mApiUser!!.getNotes(
+            bearerToken,
+            courseId
+        )
+        apiGetNoteCall.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    response.body()?.let { responseBody ->
+                        val gson = Gson()
+                        val json = responseBody.string()
+
+                        try {
+                            val jsonObject = JsonParser.parseString(json).asJsonObject
+
+                            if (jsonObject["data"].isJsonArray) {
+                                val successResponse = gson.fromJson(json, GetNoteSuccessResponse::class.java)
+                                retrofitGetNoteListener.onSuccess(GetNoteResponse.Success(successResponse.data))
+                            } else if (jsonObject["data"].isJsonPrimitive) {
+                                val noNotesResponse = gson.fromJson(json, GetNoteNoNotesResponse::class.java)
+                                retrofitGetNoteListener.onSuccess(GetNoteResponse.NoNotes(noNotesResponse.data))
+                            }
+                        } catch (e: JsonSyntaxException) {
+                            retrofitGetNoteListener.onError(call, Throwable("Response parsing error: ${e.message}"))
+                        }
+                    } ?: retrofitGetNoteListener.onError(call, Throwable("Empty response body"))
+                } else {
+                    retrofitGetNoteListener.onError(call, Throwable("HTTP Error: ${response.code()}"))
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                retrofitGetNoteListener.onError(call, t)
+            }
+        })
+    }
+
+    fun ghostFriend(
+        token: String,
+        username: String,
+        retrofitGhostListener: RetrofitGhostListener
+    ) {
+        val bearerToken = "Bearer $token"
+
+        mApiUser = retrofit.create<APICommunity>(APICommunity::class.java)
+        val apiGhostFriendCall = mApiUser!!.ghostFriend(bearerToken, username)
+        apiGhostFriendCall.enqueue(object : Callback<GhostResponse> {
+            override fun onResponse(call: Call<GhostResponse>, response: Response<GhostResponse>) {
+                retrofitGhostListener.onSuccess(call, response.body())
+            }
+
+            override fun onFailure(call: Call<GhostResponse>, t: Throwable) {
+                retrofitGhostListener.onError(call, t)
+            }
+        })
+    }
+
+    fun aliveFriend(
+        token: String,
+        username: String,
+        retrofitGhostListener: RetrofitGhostListener
+    ) {
+        val bearerToken = "Bearer $token"
+
+        mApiUser = retrofit.create<APICommunity>(APICommunity::class.java)
+        val apiAliveFriendCall = mApiUser!!.aliveFriend(bearerToken, username)
+        apiAliveFriendCall.enqueue(object : Callback<GhostResponse> {
+            override fun onResponse(call: Call<GhostResponse>, response: Response<GhostResponse>) {
+                retrofitGhostListener.onSuccess(call, response.body())
+            }
+
+            override fun onFailure(call: Call<GhostResponse>, t: Throwable) {
+                retrofitGhostListener.onError(call, t)
             }
         })
     }
